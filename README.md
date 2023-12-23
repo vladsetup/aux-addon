@@ -1,3 +1,6 @@
+Modified version of aux that shares scan data with your guild.
+This is experimental and I am unsure how well it will work, might run into issues when scanning lots of pages.
+
 # aux - WoW 1.12 AddOn
 
 The most advanced auction house addOn for the 1.12 client with some features more advanced than anything even on retail.

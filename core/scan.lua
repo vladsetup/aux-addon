@@ -1,14 +1,25 @@
 module 'aux.core.scan'
 
+AuxAddon = AceLibrary("AceAddon-2.0"):new("AceComm-2.0")   --im unsure this is done correctly but seems to work lol
+
+local commPrefix = "AuxAddon";
+AuxAddon:SetCommPrefix(commPrefix)
+
 local T = require 'T'
 local aux = require 'aux'
 local info = require 'aux.util.info'
 local history = require 'aux.core.history'
 
+
 local PAGE_SIZE = 50
 
 function aux.handle.CLOSE()
 	abort()
+end
+
+function AuxAddon:OnEnable()
+	--self:RegisterComm(commPrefix, "GROUP", "OnCommReceive") for testing purposes, not really useful in real world I think
+	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
 end
 
 do
@@ -146,6 +157,8 @@ function scan_page(i)
 		auction_info.query_type = get_state().params.type
 		
 		history.process_auction(auction_info)
+		--AuxAddon:SendCommMessage("GROUP", auction_info); for testing purposes, not really useful in real world I think
+		AuxAddon:SendCommMessage("GUILD", auction_info);
 		
 		if (get_state().params.auto_buy_validator or pass)(auction_info) and auction_info.buyout_price >0 and auction_info.owner ~= UnitName("player") then
 			local send_signal, signal_received = aux.signal()
@@ -162,6 +175,11 @@ function scan_page(i)
 
 	return scan_page(i + 1)
 end
+
+function AuxAddon:OnCommReceive(prefix, sender, distribution, auction_info)
+	history.process_auction(auction_info)
+end
+
 
 function wait_for_results()
     if get_state().params.type == 'bidder' then
