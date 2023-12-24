@@ -1,5 +1,10 @@
 module 'aux.core.history'
 
+AuxAddon = AceLibrary("AceAddon-2.0"):new("AceComm-2.0")   --im unsure this is done correctly but seems to work lol
+
+local commPrefix = "AuxAddon";
+AuxAddon:SetCommPrefix(commPrefix)
+
 local T = require 'T'
 local aux = require 'aux'
 
@@ -8,6 +13,11 @@ local persistence = require 'aux.util.persistence'
 local history_schema = {'tuple', '#', {next_push='number'}, {daily_min_buyout='number'}, {data_points={'list', ';', {'tuple', '@', {value='number'}, {time='number'}}}}}
 
 local value_cache = {}
+
+function AuxAddon:OnEnable()
+	self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
+	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
+end
 
 function aux.handle.LOAD2()
 	data = aux.faction_data.history
@@ -52,7 +62,15 @@ function M.process_auction(auction_record)
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
 		write_record(auction_record.item_key, item_record)
+		--AuxAddon:SendCommMessage("GROUP", auction_record); --for testing purposes, not really useful in real world I think
+		AuxAddon:SendCommMessage("GUILD", auction_record);
+		--print("sent data"); for testing
 	end
+end
+
+function AuxAddon:OnCommReceive(prefix, sender, distribution, auction_info)
+	--print("received data"); for testing
+	M.process_auction(auction_info);
 end
 
 function M.data_points(item_key)
