@@ -1,5 +1,5 @@
 Modified version of aux that shares scan data with your guild.
-This is experimental and I am unsure how well it will work, might run into issues when scanning lots of pages.
+This is experimental and I am unsure how well it will work, might run into issues when scanning lots of items in quick succession.
 
 # aux - WoW 1.12 AddOn
 
