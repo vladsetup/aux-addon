@@ -15,7 +15,7 @@ local history_schema = {'tuple', '#', {next_push='number'}, {daily_min_buyout='n
 local value_cache = {}
 
 function AuxAddon:OnEnable()
-	self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
+	--self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
 	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
 end
 
