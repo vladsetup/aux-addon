@@ -63,7 +63,7 @@ function M.process_auction(auction_record)
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
 		write_record(auction_record.item_key, item_record)
-		AuxAddon:SendCommMessage("Guild", item_key, unit_buyout_price)
+		AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price)
 		--AuxAddon:SendCommMessage("GROUP", auction_record); --for testing purposes, not really useful in real world I think
 		--AuxAddon:SendCommMessage("GUILD", auction_record); --don't use, serialization for tables does not seem to work consistently
 		--print("sent/wrote data"); --for testing (print comes from PFUI)
