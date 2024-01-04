@@ -16,7 +16,7 @@ local value_cache = {}
 
 function AuxAddon:OnEnable()
 	--self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
-	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
+	--self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
 end
 
 function aux.handle.LOAD2()
@@ -59,22 +59,24 @@ end
 function M.process_auction(auction_record)
 	local item_record = read_record(auction_record.item_key)
 	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
+	local item_key = auction_record.item_key
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
 		write_record(auction_record.item_key, item_record)
+		AuxAddon:SendCommMessage("Guild", item_key, unit_buyout_price)
 		--AuxAddon:SendCommMessage("GROUP", auction_record); --for testing purposes, not really useful in real world I think
-		AuxAddon:SendCommMessage("GUILD", auction_record);
+		--AuxAddon:SendCommMessage("GUILD", auction_record); --don't use, serialization for tables does not seem to work consistently
 		--print("sent/wrote data"); --for testing (print comes from PFUI)
 	end
 end
 
-function AuxAddon:OnCommReceive(prefix, sender, distribution, auction_record) --copied code from process_auction rather than calling it here to avoid resending the data also lazyness
+function AuxAddon:OnCommReceive(prefix, sender, distribution, item_key, unit_buyout_price) --copied code from process_auction rather than calling it here to avoid resending the data also lazyness
 	--print("received data"); --for testing (print comes from PFUI)
-	local item_record = read_record(auction_record.item_key)
-	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
+	local item_record = read_record(item_key)
+	--local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
-		write_record(auction_record.item_key, item_record)
+		write_record(item_key, item_record)
 		--print("wrote data"); --for testing (print comes from PFUI)
 	end
 end
