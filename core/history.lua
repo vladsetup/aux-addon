@@ -75,7 +75,7 @@ AUX_data_sharer:RegisterEvent("CHAT_MSG_CHANNEL")
 AUXplayerName = UnitName("player")
 
 
-AtlasLoot_updater:SetScript("OnEvent", function()
+AUX_data_sharer:SetScript("OnEvent", function()
 	if event == "CHAT_MSG_CHANNEL" then
 		local _,_,source = string.find(arg4,"(%d+)%.")
 		if source then
