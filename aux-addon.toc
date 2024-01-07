@@ -7,8 +7,6 @@
 
 libs\package.lua
 libs\T.lua
-libs\AceComm-2.0\AceComm-2.0.lua
-libs\AceAddon-2.0\AceAddon-2.0.lua
 
 aux-addon.lua
 util.lua

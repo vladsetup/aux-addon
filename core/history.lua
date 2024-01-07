@@ -82,7 +82,7 @@ AUX_data_sharer:SetScript("OnEvent", function()
 			_,name = GetChannelName(source)
 		end
 		if name == "LFT" then
-			local msg, item_key, munit_buyout_price = AuxAddon_strsplit(",", arg1)
+			local msg, item_key, munit_buyout_price = AuxAddon_strsplit(",", arg1) --using , as a seperator because item_key contains a :
 			if msg == "AuxData" then
 				if arg2 ~= AUXplayerName then
 					--print(arg2)
