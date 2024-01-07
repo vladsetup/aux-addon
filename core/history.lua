@@ -1,9 +1,17 @@
 module 'aux.core.history'
 
-AuxAddon = AceLibrary("AceAddon-2.0"):new("AceComm-2.0")   --im unsure this is done correctly but seems to work lol
+
+--not using acecomm anymore
+--[[AuxAddon = AceLibrary("AceAddon-2.0"):new("AceComm-2.0")   --im unsure this is done correctly but seems to work lol
 
 local commPrefix = "AuxAddon";
 AuxAddon:SetCommPrefix(commPrefix)
+
+function AuxAddon:OnEnable()
+	--self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
+	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
+	--self:RegisterComm(commPrefix, "ZONE", "OnCommReceive");
+end ]]--
 
 local T = require 'T'
 local aux = require 'aux'
@@ -13,11 +21,6 @@ local persistence = require 'aux.util.persistence'
 local history_schema = {'tuple', '#', {next_push='number'}, {daily_min_buyout='number'}, {data_points={'list', ';', {'tuple', '@', {value='number'}, {time='number'}}}}}
 
 local value_cache = {}
-
-function AuxAddon:OnEnable()
-	--self:RegisterComm(commPrefix, "GROUP", "OnCommReceive"); --for testing purposes, not really useful in real world I think
-	self:RegisterComm(commPrefix, "GUILD", "OnCommReceive");
-end
 
 function aux.handle.LOAD2()
 	data = aux.faction_data.history
@@ -56,6 +59,49 @@ function write_record(item_key, record)
 	end
 end
 
+--pfUI.api.strsplit
+local function AuxAddon_strsplit(delimiter, subject)
+	if not subject then return nil end
+	local delimiter, fields = delimiter or ":", {}
+	local pattern = string.format("([^%s]+)", delimiter)
+	string.gsub(subject, pattern, function(c) fields[table.getn(fields)+1] = c end)
+	return unpack(fields)
+  end
+
+--taken from Atlasloot Update announcing code
+
+AUX_data_sharer = CreateFrame("Frame")
+AUX_data_sharer:RegisterEvent("CHAT_MSG_CHANNEL")
+AUXplayerName = UnitName("player")
+
+
+AtlasLoot_updater:SetScript("OnEvent", function()
+	if event == "CHAT_MSG_CHANNEL" then
+		local _,_,source = string.find(arg4,"(%d+)%.")
+		if source then
+			_,name = GetChannelName(source)
+		end
+		if name == "LFT" then
+			local msg, item_key, munit_buyout_price = AuxAddon_strsplit(",", arg1)
+			if msg == "AuxData" then
+				if arg2 ~= AUXplayerName then
+					--print(arg2)
+					--print(AUXplayerName)
+					local unit_buyout_price = tonumber (munit_buyout_price)
+					--print("received data:" .. msg .. "," .. item_key .. "," .. unit_buyout_price); --for testing (print comes from PFUI)
+					local item_record = read_record(item_key)
+					if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
+						item_record.daily_min_buyout = unit_buyout_price
+						write_record(item_key, item_record)
+						--print("wrote data"); --for testing (print comes from PFUI)
+					end
+				end
+			end
+		end
+	end
+  end)
+  
+
 function M.process_auction(auction_record)
 	local item_record = read_record(auction_record.item_key)
 	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
@@ -63,22 +109,23 @@ function M.process_auction(auction_record)
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
 		write_record(auction_record.item_key, item_record)
-		AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price)
-		--AuxAddon:SendCommMessage("GROUP", auction_record); --for testing purposes, not really useful in real world I think
-		--AuxAddon:SendCommMessage("GUILD", auction_record); --don't use, serialization for tables does not seem to work consistently
-		--print("sent/wrote data"); --for testing (print comes from PFUI)
+		--AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
+		if GetChannelName("LFT") ~= 0 then
+			SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
+		  end
+		--print("sent/wrote data"); --for testing 
 	end
 end
 
-function AuxAddon:OnCommReceive(prefix, sender, distribution, item_key, unit_buyout_price) --copied code from process_auction
-	--print("received data"); --for testing (print comes from PFUI)
+--[[ function AuxAddon:OnCommReceive(prefix, sender, distribution, item_key, unit_buyout_price) --copied code from process_auction. <- code for when using acecomm
+	print("received data"); --for testing (print comes from PFUI)
 	local item_record = read_record(item_key)
 	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
 		item_record.daily_min_buyout = unit_buyout_price
 		write_record(item_key, item_record)
 		--print("wrote data"); --for testing (print comes from PFUI)
 	end
-end
+end ]]--
 
 function M.data_points(item_key)
 	return read_record(item_key).data_points
