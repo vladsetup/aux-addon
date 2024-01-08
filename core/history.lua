@@ -76,7 +76,7 @@ AUXplayerName = UnitName("player")
 
 
 AUX_data_sharer:SetScript("OnEvent", function()
-	if event == "CHAT_MSG_CHANNEL" then
+	if event == "CHAT_MSG_CHANNEL" and aux.account_data.sharing == true then
 		local _,_,source = string.find(arg4,"(%d+)%.")
 		if source then
 			_,name = GetChannelName(source)
@@ -85,8 +85,6 @@ AUX_data_sharer:SetScript("OnEvent", function()
 			local msg, item_key, munit_buyout_price = AuxAddon_strsplit(",", arg1) --using , as a seperator because item_key contains a :
 			if msg == "AuxData" then
 				if arg2 ~= AUXplayerName then
-					--print(arg2)
-					--print(AUXplayerName)
 					local unit_buyout_price = tonumber (munit_buyout_price)
 					--print("received data:" .. msg .. "," .. item_key .. "," .. unit_buyout_price); --for testing (print comes from PFUI)
 					local item_record = read_record(item_key)
@@ -101,12 +99,7 @@ AUX_data_sharer:SetScript("OnEvent", function()
 	end
   end)
 
-  local lastMessageTime = 0
-  local messageCooldown = 0.01 --time between messages in seconds. Arbitrary value to stop people from getting chat restricted when doing full scans. Could probably be lower but that would lead to so much spam, full scan bad
-
-  function M.process_auction(auction_record)
-	  local currentTime = GetTime()
-	  local elapsedTime = currentTime - lastMessageTime
+  function M.process_auction(auction_record, pages)
 	  local item_record = read_record(auction_record.item_key)
 	  local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
 	  local item_key = auction_record.item_key
@@ -114,13 +107,12 @@ AUX_data_sharer:SetScript("OnEvent", function()
 		  item_record.daily_min_buyout = unit_buyout_price
 		  write_record(auction_record.item_key, item_record)
 		  --AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
-		  if elapsedTime >= messageCooldown then
+		  if pages < 15 and aux.account_data.sharing == true then
 			  if GetChannelName("LFT") ~= 0 then
 				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
+				  --print("sent")
 				end
-			  lastMessageTime = currentTime
 		  end
-		  --print("sent/wrote data"); --for testing 
 	  end
   end
 

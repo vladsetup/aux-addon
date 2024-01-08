@@ -65,6 +65,7 @@ function handle.LOAD()
         auctionable_items = {},
         merchant_buy = {},
         merchant_sell = {},
+		sharing = true,
     })
     do
         local key = format('%s|%s', GetCVar'realmName', UnitName'player')

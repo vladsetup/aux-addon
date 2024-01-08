@@ -58,6 +58,9 @@ function SlashCmdList.AUX(command)
         aux.print('Item cache cleared.')
     elseif arguments[1] == 'populate' and arguments[2] == 'wdb' then
 	    info.populate_wdb()
+	elseif arguments[1] == 'sharing' then
+		aux.account_data.sharing = not aux.account_data.sharing
+		aux.print('sharing ' .. status(aux.account_data.sharing))
 	else
 		aux.print('Usage:')
 		aux.print('- scale [' .. aux.color.blue(aux.account_data.scale) .. ']')
@@ -74,5 +77,6 @@ function SlashCmdList.AUX(command)
 		aux.print('- tooltip disenchant distribution [' .. status(tooltip_settings.disenchant_distribution) .. ']')
 		aux.print('- clear item cache')
 		aux.print('- populate wdb')
+		aux.print('- sharing [' .. status(aux.account_data.sharing) .. ']')
     end
 end

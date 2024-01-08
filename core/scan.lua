@@ -138,6 +138,7 @@ function scan_page(i)
 		end
 	end
 
+	local pages = last_page(get_state().total_auctions)
 	local auction_info = info.auction(i, get_state().params.type)
 	if auction_info and (auction_info.owner or get_state().params.ignore_owner or aux.account_data.ignore_owner) then
 		auction_info.index = i
@@ -145,7 +146,7 @@ function scan_page(i)
 		auction_info.blizzard_query = get_query().blizzard_query
 		auction_info.query_type = get_state().params.type
 		
-		history.process_auction(auction_info)
+		history.process_auction(auction_info, pages)
 		
 		if (get_state().params.auto_buy_validator or pass)(auction_info) and auction_info.buyout_price >0 and auction_info.owner ~= UnitName("player") then
 			local send_signal, signal_received = aux.signal()
