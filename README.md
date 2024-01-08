@@ -1,7 +1,6 @@
 # This is experimental.
 Modified version of aux that shares scan data through LFT chat on the turtle wow server.  
-Whenever your addon updates a daily tooltip it will share price data that others can pick up.  
-When doing a "full scan" you will probably hit the chat rate limit. I may add message queuing to work around this later on. But there's really no need for full scans.  
+Whenever your addon updates a daily tooltip it will share price data that others can pick up.    
 
 # aux - WoW 1.12 AddOn
 
