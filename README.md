@@ -1,6 +1,7 @@
 # This is experimental.
 Modified version of aux that shares scan data through LFT chat on the turtle wow server.  
-Whenever your addon updates a daily tooltip it will share price data that others can pick up.    
+Whenever your addon updates a daily tooltip it will share price data that others can pick up.  
+You can turn of data sharing (both sending and receiving it) with **/aux sharing**  
 
 # aux - WoW 1.12 AddOn
 
