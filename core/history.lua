@@ -100,22 +100,29 @@ AUX_data_sharer:SetScript("OnEvent", function()
 		end
 	end
   end)
-  
 
-function M.process_auction(auction_record)
-	local item_record = read_record(auction_record.item_key)
-	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
-	local item_key = auction_record.item_key
-	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
-		item_record.daily_min_buyout = unit_buyout_price
-		write_record(auction_record.item_key, item_record)
-		--AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
-		if GetChannelName("LFT") ~= 0 then
-			SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
+  local lastMessageTime = 0
+  local messageCooldown = 0.001 --time between messages in seconds. Arbitrary value to stop people from getting chat restricted when doing full scans. Could probably be lower but that would lead to so much spam, full scan bad
+
+  function M.process_auction(auction_record)
+	  local currentTime = GetTime()
+	  local elapsedTime = currentTime - lastMessageTime
+	  local item_record = read_record(auction_record.item_key)
+	  local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
+	  local item_key = auction_record.item_key
+	  if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
+		  item_record.daily_min_buyout = unit_buyout_price
+		  write_record(auction_record.item_key, item_record)
+		  --AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
+		  if elapsedTime >= messageCooldown then
+			  if GetChannelName("LFT") ~= 0 then
+				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
+				end
+			  lastMessageTime = currentTime
 		  end
-		--print("sent/wrote data"); --for testing 
-	end
-end
+		  --print("sent/wrote data"); --for testing 
+	  end
+  end
 
 --[[ function AuxAddon:OnCommReceive(prefix, sender, distribution, item_key, unit_buyout_price) --copied code from process_auction. <- code for when using acecomm
 	print("received data"); --for testing (print comes from PFUI)
