@@ -102,7 +102,7 @@ AUX_data_sharer:SetScript("OnEvent", function()
   end)
 
   local lastMessageTime = 0
-  local messageCooldown = 0.001 --time between messages in seconds. Arbitrary value to stop people from getting chat restricted when doing full scans. Could probably be lower but that would lead to so much spam, full scan bad
+  local messageCooldown = 0.0001 --time between messages in seconds. Arbitrary value to stop people from getting chat restricted when doing full scans. Could probably be lower but that would lead to so much spam, full scan bad
 
   function M.process_auction(auction_record)
 	  local currentTime = GetTime()
