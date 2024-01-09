@@ -107,11 +107,13 @@ AUX_data_sharer:SetScript("OnEvent", function()
 		  item_record.daily_min_buyout = unit_buyout_price
 		  write_record(auction_record.item_key, item_record)
 		  --AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
-		  if pages < 15 and aux.account_data.sharing == true then
+		  if aux.account_data.sharing == true then
+			if pages < 15 or pages == nil then
 			  if GetChannelName("LFT") ~= 0 then
 				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
 				  --print("sent")
-				end
+			  end
+			end
 		  end
 	  end
   end
