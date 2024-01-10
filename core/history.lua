@@ -108,7 +108,7 @@ AUX_data_sharer:SetScript("OnEvent", function()
 		  write_record(auction_record.item_key, item_record)
 		  --AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
 		  if aux.account_data.sharing == true then
-			if pages < 15 or pages == nil then
+			if pages == nil or pages < 15 then --sometimes pages is nil, not entirely sure why but we'll assume it's nothing worrying xd
 			  if GetChannelName("LFT") ~= 0 then
 				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
 				  --print("sent")
