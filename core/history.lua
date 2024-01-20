@@ -100,25 +100,23 @@ AUX_data_sharer:SetScript("OnEvent", function()
   end)
 
   function M.process_auction(auction_record, pages)
-	  local item_record = read_record(auction_record.item_key)
-	  local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
-	  local item_key = auction_record.item_key
-	  if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
-		  item_record.daily_min_buyout = unit_buyout_price
-		  write_record(auction_record.item_key, item_record)
-		  --AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
-		  if aux.account_data.sharing == true then
-			if pages == nil or pages < 15 then --sometimes pages is nil, not entirely sure why but we'll assume it's nothing worrying xd NVM it does seem bad, need to investigate
-			  	if auction_record.blizzard_query.name ~= '' then --if search query is empty, dont share data
-					if GetChannelName("LFT") ~= 0 then
-				 		SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
-				  		--print("sent")
-					end
-			 	 end
-			end
+	local item_record = read_record(auction_record.item_key)
+	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
+	local item_key = auction_record.item_key
+	if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
+		item_record.daily_min_buyout = unit_buyout_price
+		write_record(auction_record.item_key, item_record)
+		--AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
+		if aux.account_data.sharing == true then
+		  if pages < 15 then --sometimes pages is nil, not entirely sure why but we'll assume it's nothing worrying xd
+			  if GetChannelName("LFT") ~= 0 then
+				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
+				  --print("sent")
+			  end
 		  end
-	  end
-  end
+		end
+	end
+end
 
 --[[ function AuxAddon:OnCommReceive(prefix, sender, distribution, item_key, unit_buyout_price) --copied code from process_auction. <- code for when using acecomm
 	print("received data"); --for testing (print comes from PFUI)

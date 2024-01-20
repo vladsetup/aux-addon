@@ -133,7 +133,7 @@ function scan_page(i)
 		do (get_state().params.on_page_scanned or pass)() end
 		if get_query().blizzard_query and get_state().page < last_page(get_state().total_auctions) then
 			get_state().page = get_state().page + 1
-			pages = last_page(get_state().total_auctions)
+			
 			return submit_query()
 		else
 			return scan()
@@ -146,6 +146,7 @@ function scan_page(i)
 		auction_info.page = get_state().page
 		auction_info.blizzard_query = get_query().blizzard_query
 		auction_info.query_type = get_state().params.type
+		pages = last_page(get_state().total_auctions)
 		
 		history.process_auction(auction_info, pages)
 		
