@@ -99,7 +99,7 @@ AUX_data_sharer:SetScript("OnEvent", function()
 	end
   end)
 
-  function M.process_auction(auction_record, pages)
+function M.process_auction(auction_record, pages)
 	local item_record = read_record(auction_record.item_key)
 	local unit_buyout_price = ceil(auction_record.buyout_price / auction_record.aux_quantity)
 	local item_key = auction_record.item_key
@@ -108,12 +108,12 @@ AUX_data_sharer:SetScript("OnEvent", function()
 		write_record(auction_record.item_key, item_record)
 		--AuxAddon:SendCommMessage("GUILD", item_key, unit_buyout_price) relies on acecomm
 		if aux.account_data.sharing == true then
-		  if pages < 15 then --sometimes pages is nil, not entirely sure why but we'll assume it's nothing worrying xd
-			  if GetChannelName("LFT") ~= 0 then
-				  SendChatMessage("AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT"))
-				  --print("sent")
-			  end
-		  end
+			if pages < 15 then --to avoid sharing data when people do searches without a keyword "full scans"
+				if GetChannelName("LFT") ~= 0 then
+					ChatThrottleLib:SendChatMessage("ALERT", nil, "AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT")) --According to Candor prioritization is wrong and ALERT gets sent last. ChatThrottleLib fixed for turtle by Candor https://github.com/trumpetx/ChatLootBidder/blob/master/ChatThrottleLib.lua
+				  	--print("sent")
+				end
+		 	end
 		end
 	end
 end
