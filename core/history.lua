@@ -110,7 +110,7 @@ function M.process_auction(auction_record, pages)
 		if aux.account_data.sharing == true then
 			if pages < 15 then --to avoid sharing data when people do searches without a keyword "full scans"
 				if GetChannelName("LFT") ~= 0 then
-					ChatThrottleLib:SendChatMessage("ALERT", nil, "AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT")) --According to Candor prioritization is wrong and ALERT gets sent last. ChatThrottleLib fixed for turtle by Candor https://github.com/trumpetx/ChatLootBidder/blob/master/ChatThrottleLib.lua
+					ChatThrottleLib:SendChatMessage("BULK", nil, "AuxData," .. item_key .."," .. unit_buyout_price , "CHANNEL", nil, GetChannelName("LFT")) --ChatThrottleLib fixed for turtle by Candor https://github.com/trumpetx/ChatLootBidder/blob/master/ChatThrottleLib.lua
 				  	--print("sent")
 				end
 		 	end
