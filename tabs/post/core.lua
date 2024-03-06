@@ -20,7 +20,7 @@ local settings_schema = {'tuple', '#', {duration='number'}, {start_price='number
 
 local scan_id, inventory_records, bid_records, buyout_records = 0, {}, {}, {}
 
-M.DURATION_2, M.DURATION_8, M.DURATION_24 = 120, 480, 1440
+M.DURATION_6, M.DURATION_24, M.DURATION_72 = 360, 1440, 4320
 
 refresh = true
 
@@ -207,11 +207,11 @@ function post_auctions()
 		local key = selected_item.key
 
         local duration_code
-		if duration == DURATION_2 then
+		if duration == DURATION_6 then
             duration_code = 2
-		elseif duration == DURATION_8 then
-            duration_code = 3
 		elseif duration == DURATION_24 then
+            duration_code = 3
+		elseif duration == DURATION_72 then
             duration_code = 4
 		end
 
@@ -259,11 +259,11 @@ function M.post_auctions_bind()
 		local key = selected_item.key
 
         local duration_code
-		if duration == DURATION_2 then
+		if duration == DURATION_6 then
             duration_code = 2
-		elseif duration == DURATION_8 then
-            duration_code = 3
 		elseif duration == DURATION_24 then
+            duration_code = 3
+		elseif duration == DURATION_72 then
             duration_code = 4
 		end
 
@@ -605,18 +605,18 @@ function initialize_duration_dropdown()
         refresh = true
     end
     UIDropDownMenu_AddButton{
-        text = '2 Hours',
-        value = DURATION_2,
-        func = on_click,
-    }
-    UIDropDownMenu_AddButton{
-        text = '8 Hours',
-        value = DURATION_8,
+        text = '6 Hours',
+        value = DURATION_6,
         func = on_click,
     }
     UIDropDownMenu_AddButton{
         text = '24 Hours',
         value = DURATION_24,
+        func = on_click,
+    }
+    UIDropDownMenu_AddButton{
+        text = '72 Hours',
+        value = DURATION_72,
         func = on_click,
     }
 end
