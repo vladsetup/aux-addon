@@ -1,6 +1,6 @@
 # AUX Turtle
 
-* Shares some price data through the LFT chat when scanning items, use **aux sharing** to disable sending and receiving data.
+* Shares some price data through the LFT chat when scanning items, use **/aux sharing** to disable sending and receiving data.
 * Accurate auction durations for Turtle WoW.
 * Autocompletion for custom Turtle WoW items.
 
