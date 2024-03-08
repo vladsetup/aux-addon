@@ -151,7 +151,7 @@ function post_auction(slot, k)
 
 		end
 		
-		StartAuction(max(1, aux.round(start_price * item_info.aux_quantity)), aux.round(buyout_price * item_info.aux_quantity), state.duration/3)
+		StartAuction(max(1, aux.round(start_price * item_info.aux_quantity)), aux.round(buyout_price * item_info.aux_quantity), state.duration)
 
 		local send_signal, signal_received = aux.signal()
 		aux.when(signal_received, function()
