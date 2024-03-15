@@ -103,7 +103,7 @@ end
 function update_inventory_listing()
 	local records = aux.values(aux.filter(aux.copy(inventory_records), function(record)
 		local settings = read_settings(record.key)
-		return record.aux_quantity > 0 and (not settings.hidden or show_hidden_checkbox:GetChecked())
+		return record.aux_quantity > 0 and (not settings.hidden or show_hidden_checkbox:GetChecked() or aux.account_data.showhidden)
 	end))
 	sort(records, function(a, b) return a.name < b.name end)
 	item_listing.populate(inventory_listing, records)
@@ -205,6 +205,7 @@ function post_auctions()
         stack_count = stack_count_slider:GetValue()
         local duration = UIDropDownMenu_GetSelectedValue(duration_dropdown)
 		local key = selected_item.key
+        print(duration)
 
         local duration_code
 		if duration == DURATION_2 then
@@ -601,6 +602,7 @@ function initialize_duration_dropdown()
         UIDropDownMenu_SetSelectedValue(duration_dropdown, this.value)
         local settings = read_settings()
         settings.duration = this.value
+        print(this.value)
         write_settings(settings)
         refresh = true
     end

@@ -86,12 +86,14 @@ AUX_data_sharer:SetScript("OnEvent", function()
 			if msg == "AuxData" then
 				if arg2 ~= AUXplayerName then
 					local unit_buyout_price = tonumber (munit_buyout_price)
+					if unit_buyout_price then
 					--print("received data:" .. msg .. "," .. item_key .. "," .. unit_buyout_price); --for testing (print comes from PFUI)
-					local item_record = read_record(item_key)
-					if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
-						item_record.daily_min_buyout = unit_buyout_price
-						write_record(item_key, item_record)
-						--print("wrote data"); --for testing (print comes from PFUI)
+						local item_record = read_record(item_key)
+						if unit_buyout_price > 0 and unit_buyout_price < (item_record.daily_min_buyout or aux.huge) then
+							item_record.daily_min_buyout = unit_buyout_price
+							write_record(item_key, item_record)
+							--print("wrote data"); --for testing (print comes from PFUI)
+						end
 					end
 				end
 			end

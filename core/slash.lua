@@ -61,6 +61,9 @@ function SlashCmdList.AUX(command)
 	elseif arguments[1] == 'sharing' then
 		aux.account_data.sharing = not aux.account_data.sharing
 		aux.print('sharing ' .. status(aux.account_data.sharing))
+	elseif arguments[1] == 'show' and arguments[2] == 'hidden' then
+		aux.account_data.showhidden = not aux.account_data.showhidden
+		aux.print('show hidden ' .. status(aux.account_data.showhidden))
 	else
 		aux.print('Usage:')
 		aux.print('- scale [' .. aux.color.blue(aux.account_data.scale) .. ']')
@@ -78,5 +81,6 @@ function SlashCmdList.AUX(command)
 		aux.print('- clear item cache')
 		aux.print('- populate wdb')
 		aux.print('- sharing [' .. status(aux.account_data.sharing) .. ']')
+		aux.print('- show hidden [' .. status(aux.account_data.showhidden) .. ']')
     end
 end
