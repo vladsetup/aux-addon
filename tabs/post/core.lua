@@ -205,7 +205,6 @@ function post_auctions()
         stack_count = stack_count_slider:GetValue()
         local duration = UIDropDownMenu_GetSelectedValue(duration_dropdown)
 		local key = selected_item.key
-        print(duration)
 
         local duration_code
 		if duration == DURATION_2 then
