@@ -601,7 +601,6 @@ function initialize_duration_dropdown()
         UIDropDownMenu_SetSelectedValue(duration_dropdown, this.value)
         local settings = read_settings()
         settings.duration = this.value
-        print(this.value)
         write_settings(settings)
         refresh = true
     end
