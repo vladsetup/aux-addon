@@ -18,7 +18,7 @@ local aux = require 'aux'
 
 local persistence = require 'aux.util.persistence'
 
-local history_schema = {'tuple', '#', {next_push='number'}, {daily_min_buyout='number'}, {data_points={'list', ';', {'tuple', '@', {value='number'}, {time='number'}}}}}
+local history_schema = {'tuple', '#', {next_push='number'}, {daily_min_buyout='number'}, {goodPrice='number'} , {data_points={'list', ';', {'tuple', '@', {value='number'}, {time='number'}}}}}
 
 local value_cache = {}
 
@@ -135,6 +135,10 @@ function M.data_points(item_key)
 end
 
 function M.value(item_key)
+	return read_record(item_key).goodPrice
+end
+
+function M.market_value(item_key)
 	if not value_cache[item_key] or value_cache[item_key].next_push <= time() then
 		local item_record, value
 		item_record = read_record(item_key)
@@ -155,10 +159,6 @@ function M.value(item_key)
 		value_cache[item_key] = T.map('value', value, 'next_push', item_record.next_push)
 	end
 	return value_cache[item_key].value
-end
-
-function M.market_value(item_key)
-	return read_record(item_key).daily_min_buyout
 end
 
 function weighted_median(list)
